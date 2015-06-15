@@ -33,6 +33,12 @@ UsrpRadarRelay::UsrpRadarRelay()
 	operating_gain = 0.0;
 	pattern_repeats = 0;
 	uhd::set_thread_priority_safe();
+	//Modification to use external clock instead of internal
+	mboard = 0;
+	clock_source = "";
+	master_clock_rate = 52e6;
+	operating_mcr = 0.0;
+	//Modification end
 }
 
 UsrpRadarRelay::~UsrpRadarRelay()
@@ -82,6 +88,18 @@ bool UsrpRadarRelay::create_pulse_pattern(struct pulse_pattern *pattern)
 
 bool UsrpRadarRelay::configure_tx(double freq, double rate, double gain)
 {
+
+	//Modification to use external clock instead of internal
+	DLOG << "Setting external Clock..." << std::endl;
+	usrp->set_clock_source(std::string("external"));
+	clock_source = usrp->get_clock_source(mboard);
+	DLOG << "Clock source: " << clock_source << std::endl;
+	DLOG << "Setting Master Clock Rate to " << master_clock_rate/1e6 << " MHz"<< std::endl;
+	usrp->set_master_clock_rate(master_clock_rate);
+	operating_mcr = usrp->get_master_clock_rate(mboard) / 1e6;
+	DLOG << "Master Clock Rate: " << operating_mcr << " MHz" << std::endl;
+	//Modification end
+
 	uint i;
 	DLOG << "Setting TX Rate to " << rate << " Msps...\t";
 	usrp->set_tx_rate(rate * 1e6);

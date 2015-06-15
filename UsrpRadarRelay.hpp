@@ -26,6 +26,12 @@ protected:
 	double operating_rate;
 	double operating_gain;
 	int pattern_repeats;
+	//Modification to use external clock instead of internal
+	size_t mboard;
+	std::string clock_source;
+	double master_clock_rate;
+	double operating_mcr;
+	//Modification end
 };
 
 class UsrpRadarRelayOnDemand : public UsrpRadarRelay
